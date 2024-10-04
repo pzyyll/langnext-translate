@@ -48,10 +48,26 @@ pub async fn set_pin<R: Runtime>(
     Ok(())
 }
 
-pub fn try_show_on_cpcp<R: Runtime>(app: &tauri::AppHandle<R>) {
+pub fn try_show_on_double_alt<R: Runtime>(app: &tauri::AppHandle<R>) {
     if let Some(win) = app.get_webview_window(consts::WIN_LABEL_TRANSLATE) {
+        let cursor = app.cursor_position().unwrap();
+        // let (x, y) = crate::utils::monitor_ex::to_logical_point(cursor.x, cursor.y);
         let _ = win.show();
         let _ = win.unminimize();
+        let _ = win.set_position(cursor);
+    } else {
+        let _ = show(app, None::<fn(_)>);
+    }
+}
+
+
+pub fn try_show_on_cpcp<R: Runtime>(app: &tauri::AppHandle<R>) {
+    if let Some(win) = app.get_webview_window(consts::WIN_LABEL_TRANSLATE) {
+        let cursor = app.cursor_position().unwrap();
+        // let (x, y) = crate::utils::monitor_ex::to_logical_point(cursor.x, cursor.y);
+        let _ = win.show();
+        let _ = win.unminimize();
+        let _ = win.set_position(cursor);
         emit_on_cpcp(win);
     } else {
         let win = show(app, None::<fn(_)>).unwrap();
@@ -97,6 +113,7 @@ where
     .auto_resize()
     .min_inner_size(300.0, 150.0)
     .inner_size(300.0, 270.0)
+    .skip_taskbar(true)
     //.transparent
     .position(x.into(), y.into())
     .fullscreen(false)
@@ -113,7 +130,7 @@ where
         }
     })
     .build()
-    .unwrap();
+    .map_err(|e| e.to_string())?;
 
     match window.try_state::<TWinState>() {
         Some(state) => {
@@ -124,7 +141,8 @@ where
         }
     }
 
-    window.on_window_event(|event| {
+    let arcw = std::sync::Arc::new(window.clone());
+    window.on_window_event(move |event| {
         // println!("window event: {:?}", event);
         match event {
             tauri::WindowEvent::Focused(focused) => {
@@ -134,37 +152,42 @@ where
                     println!("window unfocused");
                 }
             }
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                api.prevent_close();
+                let _ = arcw.hide();
+                let _ = arcw.minimize();
+            }
             tauri::WindowEvent::Destroyed => {
-                crate::plugin::keyevent::unregister_mouse_event(
-                    crate::consts::MouseEvent::LeftDown,
-                );
+                // crate::plugin::keyevent::unregister_mouse_event(
+                //     crate::consts::MouseEvent::LeftDown,
+                // );
             }
             _ => {}
         }
     });
 
-    let arcw = std::sync::Arc::new(window.clone());
-    crate::plugin::keyevent::register_mouse_event(
-        crate::consts::MouseEvent::LeftDown,
-        move |event| {
-            let xmin = arcw.outer_position().unwrap().x;
-            let ymin = arcw.outer_position().unwrap().y;
-            let xmax: i32 = xmin + arcw.outer_size().unwrap().width as i32;
-            let ymax = ymin + arcw.outer_size().unwrap().height as i32;
-            if event.pt.x < xmin
-                || event.pt.x > xmax
-                || event.pt.y < ymin
-                || event.pt.y > ymax
-            {
-                let state: tauri::State<TWinState> = arcw.state();
-                println!("WinState: {:?}", state);
-                if *state.is_pin.lock().unwrap() {
-                    return;
-                }
-                arcw.close().unwrap();
-            }
-        },
-    );
+    // let arcw = std::sync::Arc::new(window.clone());
+    // crate::plugin::keyevent::register_mouse_event(
+    //     crate::consts::MouseEvent::LeftDown,
+    //     move |event| {
+    //         let xmin = arcw.outer_position().unwrap().x;
+    //         let ymin = arcw.outer_position().unwrap().y;
+    //         let xmax: i32 = xmin + arcw.outer_size().unwrap().width as i32;
+    //         let ymax = ymin + arcw.outer_size().unwrap().height as i32;
+    //         if event.pt.x < xmin
+    //             || event.pt.x > xmax
+    //             || event.pt.y < ymin
+    //             || event.pt.y > ymax
+    //         {
+    //             let state: tauri::State<TWinState> = arcw.state();
+    //             println!("WinState: {:?}", state);
+    //             if *state.is_pin.lock().unwrap() {
+    //                 return;
+    //             }
+    //             arcw.close().unwrap();
+    //         }
+    //     },
+    // );
 
     Ok(window)
 

@@ -345,7 +345,7 @@ fn on_kb_event(wparam: WPARAM, lparam: LPARAM) {
         WM_KEYDOWN | WM_SYSKEYDOWN => {
             // debug!("key down: {}", vk_code);
             if Manager::is_modifier_key(&vk_code) {
-                debug!("modifier key down: {}", vk_code);
+                // debug!("modifier key down: {}", vk_code);
                 if MANAGER.set_modifier_pressed(vk_code.clone()) {
                     MANAGER.try_trigger_double_alt(&vk_code);
                 }
@@ -355,14 +355,14 @@ fn on_kb_event(wparam: WPARAM, lparam: LPARAM) {
             }
         }
         WM_KEYUP | WM_SYSKEYUP => {
-            debug!("key up: {}", vk_code);
+            // debug!("key up: {}", vk_code);
             if Manager::is_modifier_key(&vk_code) {
                 MANAGER.unset_modifier_pressed(&vk_code);
-                println!(
-                    "modifier key up: {}, {:?}",
-                    vk_code,
-                    MANAGER.modifier_keys.lock().unwrap()
-                );
+                // println!(
+                //     "modifier key up: {}, {:?}",
+                //     vk_code,
+                //     MANAGER.modifier_keys.lock().unwrap()
+                // );
             }
         }
         _ => {}
@@ -374,7 +374,7 @@ unsafe extern "system" fn hook_proc(
     wparam: WPARAM,
     lparam: LPARAM,
 ) -> LRESULT {
-    debug!("hook_proc: {}, {:?}, {:?}", code, wparam, lparam);
+    // debug!("hook_proc: {}, {:?}, {:?}", code, wparam, lparam);
 
     if code == HC_ACTION as i32 {
         on_kb_event(wparam.clone(), lparam.clone());

@@ -1,4 +1,8 @@
 use core::state::AppState;
+use kmhook_rs::{
+    types::{EventListener, KeyCode, Shortcut},
+    Listener,
+};
 use std::error::Error;
 use std::sync::Arc;
 use tauri::{Manager, Runtime};
@@ -11,6 +15,10 @@ mod module;
 mod plugin;
 mod utils;
 mod windows;
+
+lazy_static::lazy_static! {
+    static ref KM_LISTENER: Arc<Listener> = Listener::new();
+}
 
 fn app_setup<R: Runtime>(
     app: &mut tauri::App<R>,
@@ -65,14 +73,41 @@ fn app_setup<R: Runtime>(
     app.manage(app_state);
     windows::setup(app.handle());
     let apphandle = Arc::new(app.handle().clone());
-    plugin::keyevent::register_copy_copy(move || {
-        windows::translate::try_show_on_cpcp(&apphandle);
-    });
+    // plugin::keyevent::register_copy_copy(move || {
+    //     windows::translate::try_show_on_cpcp(&apphandle);
+    // });
+    println!("startup thread_id {:?}", std::thread::current().id());
+    KM_LISTENER.add_global_shortcut_trigger(
+        Shortcut::new(vec![KeyCode::ControlLeft, KeyCode::UsC])?,
+        move || {
+            println!("Ctrl+C pressed thread_id {:?}", std::thread::current().id());
+            windows::translate::try_show_on_cpcp(&apphandle);
+        },
+        2,
+        None,
+    )?;
     let apphandle = Arc::new(app.handle().clone());
-    plugin::keyevent::register_double_alt(move || {
-        // println!("double alt pressed");
-        let _ = windows::translate::show(&apphandle, None::<fn(_)>);
-    });
+    KM_LISTENER.add_global_shortcut_trigger(
+        Shortcut::new(vec![KeyCode::AltLeft])?,
+        move || {
+            println!("Alt pressed thread_id {:?}", std::thread::current().id());
+            // let apphandle = apphandle.clone();
+            // tauri::async_runtime::spawn_blocking(move ||{
+            //     std::thread::sleep(std::time::Duration::from_millis(200));
+            //     println!("Alt 2 pressed thread_id {:?}", std::thread::current().id());
+            //     let _ = windows::translate::try_show_on_double_alt(&apphandle);
+            // });
+            // std::thread::sleep(std::time::Duration::from_millis(800));
+            let _ = windows::translate::try_show_on_double_alt(&apphandle);
+        },
+        2,
+        None,
+    )?;
+    // plugin::keyevent::register_double_alt(move || {
+    //     // println!("double alt pressed");
+    //     let _ = windows::translate::show(&apphandle, None::<fn(_)>);
+    // });
+    KM_LISTENER.startup(Some(true));
     Ok(())
 }
 

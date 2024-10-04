@@ -1,4 +1,5 @@
 {
+  "identifier": "lexin.pzyyll.top.app",
   "app": {
     "trayIcon": {
       "iconPath": "icons/black/icon.ico",
@@ -7,5 +8,5 @@
     },
     "macOSPrivateApi": true
   },
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json"
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
 }

@@ -1,9 +1,10 @@
 {
+  "identifier": "lexin.pzyyll.top.app",
   "app": {
     "trayIcon": {
       "iconPath": "icons/black-bg/icon.ico",
       "tooltip": "Lexi Navigator"
     }
   },
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json"
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
 }
