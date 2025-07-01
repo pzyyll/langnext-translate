@@ -36,8 +36,9 @@ async fn resize_window_height(window: tauri::Window, height: f64) {
     #[cfg(windows)]
     {
         use crate::utils::monitor_ex::get_monitor_info_bywin;
+        use windows::Win32::Foundation::HWND;
         let monitor_info =
-            get_monitor_info_bywin(window.hwnd().unwrap()).unwrap();
+            get_monitor_info_bywin(HWND(window.hwnd().unwrap().0)).unwrap();
         // except the taskbar
         let work_height = monitor_info.rcWork.bottom - monitor_info.rcWork.top;
         let scala = window.scale_factor().unwrap();
