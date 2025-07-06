@@ -8,11 +8,16 @@
 //! Description: The home window module for the application.
 
 use crate::consts;
-use tauri::{Manager, Runtime, WebviewWindowBuilder};
+use tauri::{Manager, Runtime, WebviewWindow, WebviewWindowBuilder};
+use tauri_plugin_decorum::WebviewWindowExt;
+use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 #[allow(unused)]
-pub fn show<R: Runtime>(app: &tauri::AppHandle<R>) {
-    match app.get_webview_window(consts::WIN_LABEL_MAIN) {
+pub fn show<R: Runtime>(app: &tauri::AppHandle<R>)
+where
+    WebviewWindow<R>: WebviewWindowExt,
+{
+    match app.get_webview_window(consts::WIN_LABEL_HOME) {
         Some(win) => {
             win.show().expect("failed to show window");
             if win.is_minimized().unwrap_or(false) {
@@ -21,17 +26,33 @@ pub fn show<R: Runtime>(app: &tauri::AppHandle<R>) {
             win.set_focus();
         }
         None => {
-            WebviewWindowBuilder::new(
-                app,
-                consts::WIN_LABEL_MAIN,
-                tauri::WebviewUrl::App("main".into()),
-            )
-            .resizable(true)
-            .fullscreen(false)
-            .title(consts::APP_NAME)
-            .inner_size(800.0, 600.0)
-            .build()
-            .unwrap();
+            let url = tauri::WebviewUrl::App(consts::WIN_LABEL_HOME.into());
+            println!("Creating home window with URL: {:?}", url.to_string());
+
+            let mut web_build = WebviewWindowBuilder::new(app, consts::WIN_LABEL_HOME, url);
+
+            #[cfg(windows)]
+            {
+                // Enable overlay titlebar on Windows
+                web_build = web_build.decorations(false)
+            }
+
+            let win = web_build
+                .resizable(true)
+                .fullscreen(false)
+                .title(consts::APP_NAME)
+                .inner_size(600.0, 500.0)
+                .min_inner_size(600.0, 500.0)
+                .disable_drag_drop_handler()
+                .visible(false)
+                .center()
+                .build()
+                .unwrap();
+            win.create_overlay_titlebar()
+                .expect("failed to create overlay titlebar");
+
+            win.restore_state(StateFlags::POSITION | StateFlags::SIZE)
+                .expect("failed to restore window state");
         }
     }
 }

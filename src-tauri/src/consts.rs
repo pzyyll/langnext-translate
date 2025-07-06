@@ -9,9 +9,9 @@
 
 #![allow(unused)]
 
-pub const WIN_LABEL_MAIN: &str = "main";
+pub const WIN_LABEL_HOME: &str = "home";
 pub const WIN_LABEL_TRANSLATE: &str = "translate";
-pub const APP_NAME: &str = "Lexi Navigator";
+pub const APP_NAME: &str = "Lexin";
 pub const APP_DATA_CONFIG: &str = "settings.json";
 pub const SERVER_API_KEY: &str = "lexinsvr";
 pub const DOUBLE_CLICK_INTERVAL: u32 = 350;

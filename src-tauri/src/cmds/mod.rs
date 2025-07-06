@@ -37,22 +37,19 @@ async fn resize_window_height(window: tauri::Window, height: f64) {
     {
         use crate::utils::monitor_ex::get_monitor_info_bywin;
         use windows::Win32::Foundation::HWND;
-        let monitor_info =
-            get_monitor_info_bywin(HWND(window.hwnd().unwrap().0)).unwrap();
+        let monitor_info = get_monitor_info_bywin(HWND(window.hwnd().unwrap().0)).unwrap();
         // except the taskbar
         let work_height = monitor_info.rcWork.bottom - monitor_info.rcWork.top;
         let scala = window.scale_factor().unwrap();
 
-        let outerpos =
-            window.outer_position().unwrap().to_logical::<f64>(scala);
+        let outerpos = window.outer_position().unwrap().to_logical::<f64>(scala);
         let outersize = window.outer_size().unwrap().to_logical::<f64>(scala);
         let innersize = window.inner_size().unwrap().to_logical::<f64>(scala);
 
         let frame_height = outersize.height - innersize.height;
 
         // Check if the height overflow work_height
-        let overflowh =
-            outerpos.y + height + frame_height - work_height as f64 / scala;
+        let overflowh = outerpos.y + height + frame_height - work_height as f64 / scala;
 
         let set_height = if overflowh > 0.0 {
             height - overflowh
@@ -60,8 +57,7 @@ async fn resize_window_height(window: tauri::Window, height: f64) {
             height
         };
 
-        let _ = window
-            .set_size(tauri::LogicalSize::new(innersize.width, set_height));
+        let _ = window.set_size(tauri::LogicalSize::new(innersize.width, set_height));
     }
 }
 

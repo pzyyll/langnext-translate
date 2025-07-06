@@ -14,8 +14,7 @@ use windows::Win32::{
     Foundation::{HWND, POINT},
     Graphics::Gdi::{GetDC, GetDeviceCaps, LOGPIXELSX},
     Graphics::Gdi::{
-        GetMonitorInfoW, MonitorFromPoint, MonitorFromWindow, MONITORINFO,
-        MONITOR_DEFAULTTONEAREST,
+        GetMonitorInfoW, MonitorFromPoint, MonitorFromWindow, MONITORINFO, MONITOR_DEFAULTTONEAREST,
     },
     UI::Shell::GetScaleFactorForMonitor,
     UI::WindowsAndMessaging::PhysicalToLogicalPoint,
@@ -33,12 +32,8 @@ pub fn get_monitor_info_bywin(hwnd: HWND) -> Result<MONITORINFO, &'static str> {
     }
 }
 
-pub fn get_monitor_info_bypoint(
-    x: i32,
-    y: i32,
-) -> Result<MONITORINFO, &'static str> {
-    let hmonitor =
-        unsafe { MonitorFromPoint(POINT { x, y }, MONITOR_DEFAULTTONEAREST) };
+pub fn get_monitor_info_bypoint(x: i32, y: i32) -> Result<MONITORINFO, &'static str> {
+    let hmonitor = unsafe { MonitorFromPoint(POINT { x, y }, MONITOR_DEFAULTTONEAREST) };
     let mut monitor_info = MONITORINFO::default();
     monitor_info.cbSize = std::mem::size_of::<MONITORINFO>() as u32;
     let result = unsafe { GetMonitorInfoW(hmonitor, &mut monitor_info) };
@@ -50,8 +45,7 @@ pub fn get_monitor_info_bypoint(
 }
 
 pub fn to_logical_point(x: f64, y: f64) -> (f64, f64) {
-    let hwnd =
-        unsafe { windows::Win32::UI::WindowsAndMessaging::GetDesktopWindow() };
+    let hwnd = unsafe { windows::Win32::UI::WindowsAndMessaging::GetDesktopWindow() };
     let dpi = unsafe { GetDeviceCaps(Some(GetDC(Some(hwnd))), LOGPIXELSX) };
     // println!("dpi: {}", dpi);
     let scale = dpi as f64 / 96.0f64;

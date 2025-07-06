@@ -1,34 +1,33 @@
 {
-  "productName": "lexin",
-  "version": "0.1.0",
-  "identifier": "lexin.pzyyll.top.app",
-  "build": {
-    "frontendDist": "../dist",
-    "devUrl": "http://localhost:1234",
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm generate"
-  },
-  "app": {
-    "security": {
-      "csp": null
-    }
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "shortDescription": "Lexi Navigator",
-    "longDescription": "Lexi Navigator is a app for Lexi.",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico",
-      "icons/black-bg/icon.ico"
-    ],
-    "resources": [
-      "resources/languages.json"
-    ]
-  },
-  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
+	"productName": "lexin",
+	"version": "0.1.0",
+	"identifier": "com.de.agoto.lexin.app",
+	"build": {
+		"frontendDist": "../dist",
+		"devUrl": "http://localhost:1234",
+		"beforeDevCommand": "pnpm dev",
+		"beforeBuildCommand": "pnpm generate"
+	},
+	"app": {
+		"withGlobalTauri": true,
+		"security": {
+			"csp": null
+		}
+	},
+	"bundle": {
+		"active": true,
+		"targets": "all",
+		"shortDescription": "Lexin",
+		"longDescription": "Lexin is a app for Lexin.",
+		"icon": [
+			"icons/32x32.png",
+			"icons/128x128.png",
+			"icons/128x128@2x.png",
+			"icons/icon.icns",
+			"icons/icon.ico",
+			"icons/black-bg/icon.ico"
+		],
+		"resources": ["resources/languages.json"]
+	},
+	"$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
 }

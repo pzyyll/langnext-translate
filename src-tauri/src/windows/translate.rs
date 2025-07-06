@@ -17,15 +17,14 @@ use std::sync::atomic::Ordering::Relaxed;
 use std::sync::Mutex;
 use std::sync::{atomic::AtomicUsize, Arc};
 use tauri::{
-    Emitter, EventTarget, Listener, Manager, PhysicalPosition, PhysicalSize,
-    Pixel, Runtime, WebviewWindow,
+    Emitter, EventTarget, Listener, Manager, PhysicalPosition, PhysicalSize, Pixel, Runtime,
+    WebviewWindow,
 };
 use tauri_plugin_clipboard_manager::ClipboardExt;
 
 lazy_static! {
     static ref MOUSE_EVENT_ID: Arc<AtomicUsize> = Arc::new(AtomicUsize::new(0));
-    static ref WIN_SIZE: Arc<Mutex<(f64, f64)>> =
-        Arc::new(Mutex::new((300.0, 270.0)));
+    static ref WIN_SIZE: Arc<Mutex<(f64, f64)>> = Arc::new(Mutex::new((300.0, 270.0)));
 }
 
 #[derive(Debug, Default)]
@@ -54,8 +53,7 @@ fn adjust_win_position<R: Runtime, P: Pixel>(
     cursor: Option<PhysicalPosition<P>>,
 ) {
     let cursor: PhysicalPosition<P> = cursor.unwrap_or_else(|| {
-        let cursor: PhysicalPosition<f64> =
-            win.outer_position().unwrap().cast();
+        let cursor: PhysicalPosition<f64> = win.outer_position().unwrap().cast();
         PhysicalPosition::new(P::from_f64(cursor.x), P::from_f64(cursor.y))
     });
 
@@ -92,8 +90,7 @@ fn adjust_win_position<R: Runtime, P: Pixel>(
             println!("offset_y: {}", offset_y);
         });
 
-    let _ =
-        win.set_position(PhysicalPosition::new(P::from_f64(x), P::from_f64(y)));
+    let _ = win.set_position(PhysicalPosition::new(P::from_f64(x), P::from_f64(y)));
 }
 
 fn emit_on_cpcp<R: Runtime>(win: WebviewWindow<R>) {
@@ -143,8 +140,7 @@ pub fn try_show_on_cpcp<R: Runtime>(app: &tauri::AppHandle<R>) {
         let arc_app = std::sync::Arc::new(app.clone());
 
         win.once("on_ready", move |_event| {
-            let result =
-                arc_app.get_webview_window(consts::WIN_LABEL_TRANSLATE);
+            let result = arc_app.get_webview_window(consts::WIN_LABEL_TRANSLATE);
             match result {
                 Some(win) => {
                     emit_on_cpcp(win.clone());
@@ -157,10 +153,7 @@ pub fn try_show_on_cpcp<R: Runtime>(app: &tauri::AppHandle<R>) {
     }
 }
 
-fn set_win_visible<R: Runtime>(
-    app: &tauri::AppHandle<R>,
-    win: &WebviewWindow<R>,
-) {
+fn set_win_visible<R: Runtime>(app: &tauri::AppHandle<R>, win: &WebviewWindow<R>) {
     let _ = win.show();
     let _ = win.unminimize();
     // let _ = win.set_position(cursor);
@@ -201,33 +194,33 @@ where
     }
 
     let window = window_builder
-    // .decorations(false)
-    .title(consts::APP_NAME)
-    .always_on_top(true)
-    .resizable(true)
-    .auto_resize()
-    .min_inner_size(400.0, 300.0)
-    .inner_size(400.0, 300.0)
-    .skip_taskbar(true)
-    //.transparent
-    .position(x.into(), y.into())
-    .fullscreen(false)
-    .on_page_load(move |window, payload| {
-        // println!("page loaded: {:?}", payload);
-        use tauri::webview::PageLoadEvent;
-        match payload.event() {
-            PageLoadEvent::Finished => {
-                record_win_outer_size(&window);
-                adjust_win_position::<_, f64>(&window, None);
-                if let Some(on_page_load) = &on_page_load {
-                    on_page_load(window);
+        // .decorations(false)
+        .title(consts::APP_NAME)
+        .always_on_top(true)
+        .resizable(true)
+        .auto_resize()
+        .min_inner_size(400.0, 300.0)
+        .inner_size(400.0, 300.0)
+        .skip_taskbar(true)
+        //.transparent
+        .position(x.into(), y.into())
+        .fullscreen(false)
+        .on_page_load(move |window, payload| {
+            // println!("page loaded: {:?}", payload);
+            use tauri::webview::PageLoadEvent;
+            match payload.event() {
+                PageLoadEvent::Finished => {
+                    record_win_outer_size(&window);
+                    adjust_win_position::<_, f64>(&window, None);
+                    if let Some(on_page_load) = &on_page_load {
+                        on_page_load(window);
+                    }
                 }
+                _ => {}
             }
-            _ => {}
-        }
-    })
-    .build()
-    .map_err(|e| e.to_string())?;
+        })
+        .build()
+        .map_err(|e| e.to_string())?;
 
     match window.try_state::<TWinState>() {
         Some(state) => {
@@ -290,16 +283,10 @@ where
     // }
 }
 
-fn check_pos_in_window<R: Runtime>(
-    window: &WebviewWindow<R>,
-    pos: &Pos,
-) -> bool {
-    if let (Ok(position), Ok(size)) =
-        (window.outer_position(), window.outer_size())
-    {
+fn check_pos_in_window<R: Runtime>(window: &WebviewWindow<R>, pos: &Pos) -> bool {
+    if let (Ok(position), Ok(size)) = (window.outer_position(), window.outer_size()) {
         let (xmin, ymin) = (position.x, position.y);
-        let (xmax, ymax) =
-            (xmin + size.width as i32, ymin + size.height as i32);
+        let (xmax, ymax) = (xmin + size.width as i32, ymin + size.height as i32);
         let pt = pos;
         if pt.x < xmin || pt.x > xmax || pt.y < ymin || pt.y > ymax {
             return false;

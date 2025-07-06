@@ -1,0 +1,12 @@
+import type { Pinia } from 'pinia';
+import { TauriPluginPinia } from '@tauri-store/pinia';
+
+// See: https://pinia.vuejs.org/core-concepts/plugins.html#Nuxt-js
+export default defineNuxtPlugin(({ $pinia }) => {
+	($pinia as Pinia).use(
+		TauriPluginPinia({
+			autoStart: true,
+			saveStrategy: 'immediate'
+		})
+	);
+});

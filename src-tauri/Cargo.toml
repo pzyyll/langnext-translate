@@ -1,8 +1,8 @@
 [package]
 name = "lexin"
 version = "0.1.0"
-description = "Lexin Navigator"
-authors = ["pzyyll"]
+description = "Lexin"
+authors = ["agoto.de"]
 license = ""
 repository = ""
 edition = "2021"
@@ -21,32 +21,33 @@ tauri-build = { version = "2.3.0", features = [] }
 opt-level = "s"
 
 [dependencies]
-serde_json = "1.0.140"
-serde = { version = "1.0.219", features = ["derive"] }
-tauri = { version = "2.6.2", features = [
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [
     "tray-icon",
     "image-ico",
     "image-png",
     "unstable",
 ] }
-tauri-plugin-single-instance = "2.3.0"
-tauri-plugin-shell = "2.3.0"
-tauri-plugin-os = "2.3.0"
-lazy_static = "1.5.0"
-tauri-plugin-log = "2.6.0"
-tauri-plugin-store = "2.3.0"
-tauri-plugin-http = "2.5.0"
-thiserror = "2.0.12"
-base64 = "0.22.1"
-reqwest = { version = "0.12.20", features = ["json", "stream", "multipart"] }
+tauri-plugin-single-instance = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-os = "2"
+lazy_static = "1"
+tauri-plugin-log = "2"
+tauri-plugin-store = "2"
+tauri-plugin-http = "2"
+thiserror = "2"
+base64 = "0.22"
+reqwest = { version = "0.12", features = ["json", "stream", "multipart"] }
 futures = "0.3.31"
-log = { version = "0.4.27", features = ["kv_unstable"] }
+log = { version = "0.4", features = ["kv_unstable"] }
 libc = "0.2.174"
-enigo = "0.3.0"
+tauri-plugin-decorum = "1"
+tauri-plugin-pinia = "3"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = { version = "2.3.0" }
-tauri-plugin-window-state = "2.3.0"
+tauri-plugin-window-state = "2"
 tauri-plugin-clipboard-manager = "2.3.0"
 mdict_analysis = { git = "https://github.com/pzyyll/mdict-analysis-rs.git", branch = "main" }
 kmhook = { git = "https://github.com/pzyyll/kmhook-rs.git", branch = "main" }
@@ -68,4 +69,3 @@ windows = { version = "0.61.0", features = [
     "UI_UIAutomation_Core",
     "Win32_System_Com",
 ] }
-

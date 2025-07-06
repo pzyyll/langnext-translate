@@ -1,0 +1,16 @@
+{
+  "app-title-nt": "Lexin",
+  "login": "Anmelden",
+  "services": "Dienste",
+  "settings": "Einstellungen",
+  "info": "Info",
+  "quick-input": "Schnelleingabe",
+  "translate": "Textübersetzung",
+  "ocr": "Texterkennung",
+  "speech": "Spracherkennung",
+  "note": "Vokabelheft",
+  "openai-nt": "Open AI",
+  "deepl-nt": "DeepL",
+  "google-nt": "Google Translate",
+  "new-translate-api": "Übersetzungsdienst hinzufügen"
+}

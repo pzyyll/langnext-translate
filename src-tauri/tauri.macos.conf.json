@@ -1,10 +1,10 @@
 {
-  "identifier": "lexin.pzyyll.top.app",
+  "identifier": "com.de.agoto.lexin.app",
   "app": {
     "trayIcon": {
       "iconPath": "icons/black/icon.ico",
       "iconAsTemplate": true,
-      "tooltip": "Lexi Navigator"
+      "tooltip": "Lexin"
     },
     "macOSPrivateApi": true
   },

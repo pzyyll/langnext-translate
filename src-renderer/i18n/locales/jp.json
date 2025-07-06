@@ -1,0 +1,16 @@
+{
+  "app-title-nt": "Lexin",
+  "login": "ログイン",
+  "services": "サービス",
+  "settings": "設定",
+  "info": "情報",
+  "quick-input": "クイック入力",
+  "translate": "テキスト翻訳",
+  "ocr": "テキスト認識",
+  "speech": "音声認識",
+  "note": "単語帳",
+  "openai-nt": "Open AI",
+  "deepl-nt": "DeepL",
+  "google-nt": "Google Translate",
+  "new-translate-api": "翻訳サービスを追加"
+}

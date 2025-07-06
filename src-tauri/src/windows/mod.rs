@@ -8,11 +8,15 @@
 //! Description: Windows module for Tauri.
 
 use tauri::Runtime;
+use tauri_plugin_decorum::WebviewWindowExt;
 
 pub mod home;
 pub mod translate;
 pub mod tray;
 
-pub fn setup<R: Runtime>(app: &tauri::AppHandle<R>) {
+pub fn setup<R: Runtime>(app: &tauri::AppHandle<R>)
+where
+    tauri::WebviewWindow<R>: WebviewWindowExt,
+{
     tray::setup(app);
 }

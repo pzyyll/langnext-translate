@@ -1,9 +1,11 @@
 use core::state::AppState;
+use kmhook::enginer as hotkey_enginer;
 use std::error::Error;
 use std::sync::Arc;
 use tauri::{Manager, Runtime};
+use tauri_plugin_decorum::WebviewWindowExt;
 use tauri_plugin_log::{Target, TargetKind};
-use kmhook::enginer as hotkey_enginer;
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 mod cmds;
 mod consts;
@@ -13,9 +15,10 @@ mod plugin;
 mod utils;
 mod windows;
 
-fn app_setup<R: Runtime>(
-    app: &mut tauri::App<R>,
-) -> Result<(), Box<dyn Error>> {
+fn app_setup<R: Runtime>(app: &mut tauri::App<R>) -> Result<(), Box<dyn Error>>
+where
+    tauri::WebviewWindow<R>: WebviewWindowExt,
+{
     #[cfg(debug_assertions)]
     {
         use tauri_plugin_global_shortcut::{GlobalShortcut, ShortcutState};
@@ -39,9 +42,8 @@ fn app_setup<R: Runtime>(
                         if let WebviewLabelAlreadyExists(_) = e {
                             // focus the window
                             println!("Focusing window");
-                            let devlan_win = app
-                                .get_webview_window("devlab")
-                                .expect("window not found");
+                            let devlan_win =
+                                app.get_webview_window("devlab").expect("window not found");
                             devlan_win
                                 .set_focus()
                                 .expect("failed to set focus to window");
@@ -55,6 +57,11 @@ fn app_setup<R: Runtime>(
             }
         })?;
     }
+
+    let _ = app
+        .handle()
+        .save_window_state(StateFlags::POSITION | StateFlags::SIZE);
+
     let app_state = AppState::build(app.handle());
     app.manage(app_state);
     windows::setup(app.handle());
@@ -64,10 +71,7 @@ fn app_setup<R: Runtime>(
         hotkey_enginer::add_global_shortcut_trigger(
             "Ctrl+C",
             move || {
-                println!(
-                    "Ctrl+C pressed thread_id {:?}",
-                    std::thread::current().id()
-                );
+                println!("Ctrl+C pressed thread_id {:?}", std::thread::current().id());
                 windows::translate::try_show_on_cpcp(&apphandle);
             },
             2,
@@ -79,42 +83,24 @@ fn app_setup<R: Runtime>(
         hotkey_enginer::add_global_shortcut_trigger(
             "Alt",
             move || {
-                println!(
-                    "Alt pressed thread_id {:?}",
-                    std::thread::current().id()
-                );
+                println!("Alt pressed thread_id {:?}", std::thread::current().id());
                 let _ = windows::translate::try_show_on_double_alt(&apphandle);
             },
             2,
             None,
         )?;
     }
-
-    // {
-    //     let apphandle = Arc::clone(&apphandle);
-    //     let _ = hotkey_enginer::add_global_shortcut(
-    //         "Ctrl+F9",
-    //         move || {
-    //             use tauri_plugin_clipboard_manager::ClipboardExt;
-    //             println!(
-    //                 "Alt pressed thread_id {:?}",
-    //                 std::thread::current().id()
-    //             );
-    //             plugin::simulator_input::trigger_copy();
-    //             let text = apphandle.as_ref().clipboard().read_text().unwrap();
-    //             println!("clipboard text: {:?}", text);
-    //             plugin::simulator_input::text("hello world");
-    //         },
-    //     );
-    // }
-
     hotkey_enginer::startup(Some(true));
+
     Ok(())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_pinia::init())
+        .plugin(tauri_plugin_window_state::Builder::new().build())
+        .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -160,56 +146,6 @@ pub fn run() {
                     _ => {}
                 }
             }
-            // tauri::RunEvent::MainEventsCleared => {
-            //     #[cfg(windows)]
-            //     {
-            //         use ::windows::core::PCWSTR;
-            //         use ::windows::Win32::Foundation::HINSTANCE;
-            //         use ::windows::Win32::Graphics::Gdi::{GetDC, ReleaseDC};
-            //         use ::windows::Win32::UI::WindowsAndMessaging::{
-            //             DrawIcon, LoadImageW, HICON, IMAGE_ICON,
-            //             LR_DEFAULTSIZE, LR_LOADFROMFILE,
-            //         };
-            //         use std::os::windows::ffi::OsStrExt;
-
-            //         // let twin = app.get_window("translate");
-
-            //         let translatewin = app.get_window("translate");
-            //         if let Some(win) = translatewin {
-            //             unsafe {
-            //                 let hdc = GetDC(win.hwnd().unwrap());
-            //                 let icon_name = std::path::Path::new(
-            //                     "F:\\codespace\\win32api-guide\\icon.ico",
-            //                 )
-            //                 .as_os_str()
-            //                 .encode_wide()
-            //                 .chain(std::iter::once(0))
-            //                 .collect::<Vec<u16>>();
-            //                 if !hdc.is_invalid() {
-            //                     println!("Got DC: {:?}", hdc);
-            //                     let hicon = LoadImageW(
-            //                         HINSTANCE::default(),
-            //                         PCWSTR::from_raw(icon_name.as_ptr()),
-            //                         IMAGE_ICON,
-            //                         0,
-            //                         0,
-            //                         LR_DEFAULTSIZE | LR_LOADFROMFILE,
-            //                     );
-            //                     if hicon.is_ok() {
-            //                         println!("load. {:?}", hicon);
-            //                         let hicon = std::mem::transmute::<_, HICON>(
-            //                             hicon.unwrap(),
-            //                         );
-            //                         let _ =
-            //                             DrawIcon(hdc, 50, 0, hicon.clone());
-            //                         let _ = DestroyIcon(hicon);
-            //                     }
-            //                 }
-            //                 ReleaseDC(win.hwnd().unwrap(), hdc);
-            //             }
-            //         }
-            //     }
-            // }
             _ => {}
         });
 }

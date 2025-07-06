@@ -35,12 +35,8 @@ impl TranslatePath {
             TranslatePath::Text => "/api/translate/text".to_string(),
             TranslatePath::Languages => "api/translate/languages".to_string(),
             TranslatePath::Detect => "/api/translate/detect".to_string(),
-            TranslatePath::Speech => {
-                "/api/translate/text-to-speech".to_string()
-            }
-            TranslatePath::ImgToText => {
-                "/api/translate/img-to-text".to_string()
-            }
+            TranslatePath::Speech => "/api/translate/text-to-speech".to_string(),
+            TranslatePath::ImgToText => "/api/translate/img-to-text".to_string(),
         }
     }
 

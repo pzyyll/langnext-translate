@@ -1,5 +1,5 @@
 {
   "productName": "lexin-dev",
-  "identifier": "lexin.pzyyll.top.app.dev",
+  "identifier": "com.de.agoto.lexin.app.dev",
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
 }

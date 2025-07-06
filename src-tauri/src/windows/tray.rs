@@ -12,8 +12,12 @@
 use crate::consts;
 use tauri::menu::{MenuBuilder, MenuItemBuilder};
 use tauri::Runtime;
+use tauri_plugin_decorum::WebviewWindowExt;
 
-pub fn setup<R: Runtime>(app: &tauri::AppHandle<R>) {
+pub fn setup<R: Runtime>(app: &tauri::AppHandle<R>)
+where
+    tauri::WebviewWindow<R>: WebviewWindowExt,
+{
     let tray_icon = app.tray_by_id("main").expect("tray not found");
     let _ = tray_icon.set_tooltip(consts::APP_NAME.into());
 
@@ -32,29 +36,22 @@ pub fn setup<R: Runtime>(app: &tauri::AppHandle<R>) {
         }
     });
     // tray_icon.set_show_menu_on_left_click(true).unwrap();
-    tray_icon.on_tray_icon_event(
-        |tray_icon, event: tauri::tray::TrayIconEvent| {
-            match event {
-                tauri::tray::TrayIconEvent::Click {
-                    button,
-                    button_state,
-                    ..
-                } => {
-                    if button == tauri::tray::MouseButton::Left
-                        && button_state == tauri::tray::MouseButtonState::Up
-                    {
-                        println!("Left click");
-                        // show the main windows
-                        crate::windows::home::show(tray_icon.app_handle());
-                    }
+    tray_icon.on_tray_icon_event(|tray_icon, event: tauri::tray::TrayIconEvent| {
+        match event {
+            tauri::tray::TrayIconEvent::Click {
+                button,
+                button_state,
+                ..
+            } => {
+                if button == tauri::tray::MouseButton::Left
+                    && button_state == tauri::tray::MouseButtonState::Up
+                {
+                    println!("Left click");
+                    // show the main windows
+                    crate::windows::home::show(tray_icon.app_handle());
                 }
-                // tauri::tray::ClickType::Left => {
-                //     println!("Left click");
-                //     // show the main windows
-                //     crate::windows::home::show(tray_icon.app_handle());
-                // }
-                _ => {}
             }
-        },
-    );
+            _ => {}
+        }
+    });
 }
