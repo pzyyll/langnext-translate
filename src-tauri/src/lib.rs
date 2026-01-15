@@ -66,30 +66,34 @@ where
     app.manage(app_state);
     windows::setup(app.handle());
     let apphandle = Arc::new(app.handle().clone());
-    {
-        let apphandle = Arc::clone(&apphandle);
-        hotkey_enginer::add_global_shortcut_trigger(
-            "Ctrl+C",
+    
+    // Register Ctrl+C hotkey
+    hotkey_enginer::add_global_shortcut_trigger(
+        "Ctrl+C",
+        {
+            let apphandle = Arc::clone(&apphandle);
             move || {
                 println!("Ctrl+C pressed thread_id {:?}", std::thread::current().id());
                 windows::translate::try_show_on_cpcp(&apphandle);
-            },
-            2,
-            None,
-        )?;
-    }
-    {
-        let apphandle = Arc::clone(&apphandle);
-        hotkey_enginer::add_global_shortcut_trigger(
-            "Alt",
+            }
+        },
+        2,
+        None,
+    )?;
+    
+    // Register Alt hotkey
+    hotkey_enginer::add_global_shortcut_trigger(
+        "Alt",
+        {
+            let apphandle = Arc::clone(&apphandle);
             move || {
                 println!("Alt pressed thread_id {:?}", std::thread::current().id());
                 let _ = windows::translate::try_show_on_double_alt(&apphandle);
-            },
-            2,
-            None,
-        )?;
-    }
+            }
+        },
+        2,
+        None,
+    )?;
     hotkey_enginer::startup(Some(true));
 
     Ok(())
