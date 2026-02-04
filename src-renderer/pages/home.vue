@@ -4,6 +4,7 @@ import GravityUiGear from '~icons/gravity-ui/gear';
 import GravityUiCircleInfo from '~icons/gravity-ui/circle-info';
 import GravityUiThunderbolt from '~icons/gravity-ui/thunderbolt';
 import GravityUiArchive from '~icons/gravity-ui/archive';
+import GravityUiSparkles from '~icons/gravity-ui/sparkles';
 
 definePageMeta({
 	layout: false,
@@ -18,6 +19,7 @@ definePageMeta({
 
 const sideItems = ref([
 	{ title: 'services', icon: GravityUiServer, path: '/home/services' },
+	{ title: 'models', icon: GravityUiSparkles, path: '/home/models' },
 	{ title: 'quick-input', icon: GravityUiThunderbolt, path: '/home/quick-input' },
 	{ title: 'settings', icon: GravityUiGear, path: '/home/settings' },
 	{ title: 'backup', icon: GravityUiArchive, path: '/home/backup' },

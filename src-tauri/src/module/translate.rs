@@ -100,7 +100,10 @@ pub async fn translate_languages(
         let res = CLIENT
             .get(TranslatePath::Languages.join_url(&url))
             .bearer_auth(token)
-            .query(&[("dlc", display_language_code), ("api_type", api_type)])
+            .query(&[
+                ("dlc", display_language_code.as_str()),
+                ("api_type", api_type.as_str()),
+            ])
             .send()
             .await
             .map_err(|e| e.to_string())?;

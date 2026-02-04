@@ -30,5 +30,11 @@
 	"test-connection": "测试连接",
 	"prompt": "提示词",
 	"delete-channel": "删除渠道",
-	"delete-channel-description": "您确定要删除此渠道吗？"
+	"delete-channel-description": "您确定要删除此渠道吗？",
+	"models": "模型",
+	"models-description": "管理用于翻译和其他AI功能的语言模型配置",
+	"no-models": "暂无配置的模型",
+	"no-models-hint": "添加您的第一个AI模型配置，开始使用智能翻译和语言处理功能",
+	"add-model": "添加模型",
+	"models-support-hint": "支持 OpenAI、Claude、Gemini 等主流模型"
 }
