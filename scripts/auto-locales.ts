@@ -4,7 +4,7 @@ import { zodResponseFormat } from 'openai/helpers/zod';
 import z from 'zod';
 import fs from 'fs';
 
-const baseModel = 'gpt-4.1-mini';
+const baseModel = 'gpt-5-mini';
 const apiKey = process.env.OPENAI_API_KEY;
 const baseUrl = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
 const client = new OpenAI({ apiKey, baseURL: baseUrl });
