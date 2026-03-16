@@ -52,7 +52,14 @@ impl Settings {
     pub fn load_from_file(file: &str) -> Result<Self, Box<dyn StdError>> {
         ensure_file_exists(&file)?;
         let data = std::fs::read_to_string(file.to_string())?;
-        let mut settings: Settings = serde_json::from_str(&data)?;
+        let trimmed = data.trim();
+        if trimmed.is_empty() {
+            let mut settings = Settings::new();
+            settings.file = file.to_string();
+            settings.save();
+            return Ok(settings);
+        }
+        let mut settings: Settings = serde_json::from_str(trimmed)?;
         settings.file = file.to_string();
         Ok(settings)
     }

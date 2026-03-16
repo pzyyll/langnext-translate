@@ -42,9 +42,6 @@ export default defineNuxtConfig({
 		],
 		defaultLocale: 'zh',
 		restructureDir: 'src-renderer/i18n',
-		bundle: {
-			optimizeTranslationDirective: false
-		},
 		strategy: 'no_prefix'
 		// detectBrowserLanguage: {
 		// 	useCookie: true,

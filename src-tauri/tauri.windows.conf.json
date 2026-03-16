@@ -1,9 +1,9 @@
 {
-  "identifier": "com.de.agoto.lexin.app",
+  "identifier": "com.de.agoto.langnext.app",
   "app": {
     "trayIcon": {
       "iconPath": "icons/black-bg/icon.ico",
-      "tooltip": "Lexin"
+      "tooltip": "LangNext"
     }
   },
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"

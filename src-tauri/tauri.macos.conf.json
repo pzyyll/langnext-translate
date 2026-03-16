@@ -1,10 +1,10 @@
 {
-  "identifier": "com.de.agoto.lexin.app",
+  "identifier": "com.de.agoto.langnext.app",
   "app": {
     "trayIcon": {
       "iconPath": "icons/black/icon.ico",
       "iconAsTemplate": true,
-      "tooltip": "Lexin"
+      "tooltip": "LangNext"
     },
     "macOSPrivateApi": true
   },
