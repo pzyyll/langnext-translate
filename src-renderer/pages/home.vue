@@ -9,9 +9,9 @@ import GravityUiSparkles from '~icons/gravity-ui/sparkles';
 definePageMeta({
 	layout: false,
 	middleware: [
-		function (to) {
+		function (to: { path: string }) {
 			if (to.path === '/home' || to.path === '/home/') {
-				return navigateTo('/home/services');
+				return navigateTo('/home/services')
 			}
 		}
 	]

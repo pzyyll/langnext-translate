@@ -5,6 +5,8 @@ import IconGoogle from "~icons/svgs/google-translate-logo";
 import IconDeepL from "~icons/svgs/deepl-logo";
 import IconBaidu from "~icons/svgs/baidu-logo";
 import IconChatGpt from "~icons/svgs/chatgpt-logo";
+import IconGemini from "~icons/svgs/gemini-logo";
+import IconClaude from "~icons/svgs/claude-logo";
 
 const props = defineProps<{
   name: string;
@@ -15,6 +17,8 @@ const components: Record<string, FunctionalComponent<SVGAttributes>> = {
   IconDeepL,
   IconBaidu,
   IconChatGpt,
+  IconGemini,
+  IconClaude
 };
 </script>
 

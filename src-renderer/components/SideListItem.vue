@@ -8,7 +8,7 @@ const props = defineProps({
 
 <template>
 	<button
-		class="du-btn du-btn-ghost du-btn-sm w-full gap-0 p-0"
+		class="du-btn du-btn-ghost du-btn-sm w-full gap-0 p-0 rounded-2xl"
 		:class="{
 			'du-btn-active': props.highlighted
 		}"

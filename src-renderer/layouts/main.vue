@@ -12,16 +12,15 @@ useHead({
 <template>
 	<div class="flex h-screen w-full flex-col">
 		<header>
-			<WinTitleBarDefault class="border-b-base-300 border-b-[1px]" />
-			<!-- <WinTitleBar /> -->
+			<WinTitleBarDefault class="border-b-base-300 border-b" />
 		</header>
 		<div class="flex flex-1 overflow-hidden">
-			<!-- 左侧导航菜单区域 -->
-			<aside class="border-r-base-300 flex flex-col gap-1 overflow-y-auto border-r-[1px]">
+			<!-- Left navigation menu area -->
+			<aside class="border-r-base-300 flex flex-col gap-1 overflow-y-auto border-r">
 				<slot name="sidebar" />
 			</aside>
 
-			<!-- 右侧内容展示区域 -->
+			<!-- Right-side content display area -->
 			<main class="flex-1">
 				<slot />
 			</main>

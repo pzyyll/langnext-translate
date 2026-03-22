@@ -11,7 +11,7 @@
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"auto:locales": "bun tsx ./scripts/auto-locales.ts"
+		"generate:locales": "bun tsx ./scripts/generate-locales.ts"
 	},
 	"dependencies": {
 		"@formkit/auto-animate": "^0.9.0",

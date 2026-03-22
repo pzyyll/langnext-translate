@@ -5,8 +5,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-	clickDelete: void;
-	clickEdit: void;
+	clickDelete: [];
+	clickEdit: [];
 	switchChange: [value: boolean];
 }>();
 
@@ -20,7 +20,7 @@ const switchOn = computed({
 
 <template>
 	<div
-		class="du-card du-card-sm bg-base-100 border-base-300 hover:bg-base-300/80 rounded-lg border transition-transform duration-100 hover:-translate-y-[1px]"
+		class="du-card du-card-sm bg-base-100 border-base-300 hover:bg-base-300/80 rounded-lg border transition-transform duration-100 hover:-translate-y-px"
 	>
 		<div class="du-card-body">
 			<div class="flex items-center justify-between">

@@ -1,8 +1,12 @@
 {
   "mcpServers": {
-    "nuxt": {
-      "type": "http",
-      "url": "https://nuxt.com/mcp"
-    }
-  }
+		"nuxt": {
+			"type": "http",
+			"url": "https://nuxt.com/mcp"
+		},
+		"openai-developer-docs": {
+			"url": "https://developers.openai.com/mcp",
+			"type": "http"
+		}
+	}
 }

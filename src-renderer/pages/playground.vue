@@ -159,7 +159,7 @@ onUnmounted(() => {});
     </template>
   </BaseToolsbar>
 
-  <div class="h-[512px] w-full flex justify-center items-center">
+  <div class="h-128 w-full flex justify-center items-center">
     <button class="du-btn">点击查询精神状态</button>
   </div>
 </template>
