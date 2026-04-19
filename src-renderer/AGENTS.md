@@ -39,7 +39,8 @@ src-renderer/
 │   └── Alert.vue     # Alert component
 ├── stores/           # Pinia setup stores
 │   ├── translate.ts  # Translation state (languages, input, output tabs)
-│   └── translate-api.ts # Channel CRUD (AddChannel, UpdateChannel, DeleteChannel)
+│   ├── translate-api.ts # Channel CRUD (AddChannel, UpdateChannel, DeleteChannel)
+│   └── model.ts      # AI model provider config (Anthropic, OpenAI, Gemini, NewAPI)
 ├── plugins/          # Numbered load order
 │   ├── 01.global.ts  # $media, $translateType, $rootFontSize
 │   ├── 02.tauriapi.ts # $tauri (Tauri class: window ops, clipboard, events)
@@ -65,18 +66,19 @@ src-renderer/
 
 ## WHERE TO LOOK
 
-| Task                      | File                        | Notes                                        |
-| ------------------------- | --------------------------- | -------------------------------------------- |
-| Add page                  | `pages/[name].vue`          | Auto-routed, use layouts                     |
-| Add component             | `components/[Domain]/`      | Base for reusable, feature-name for specific |
-| Add store state           | `stores/translate.ts`       | Composition API, auto-persisted              |
-| Add translation channel   | `stores/translate-api.ts`   | CRUD via AddChannel/UpdateChannel            |
-| Add Tauri command wrapper | `plugins/03.translate.ts`   | invoke() with typed params                   |
-| Add i18n string           | `i18n/locales/*.json`       | Both en.json and zh.json                     |
-| Add custom icon           | `assets/icons/*.svg`        | Auto-resolved via `icon-svgs-*`              |
-| Add composable            | `composables/[name].ts`     | Auto-imported by Nuxt                        |
-| Add type declarations     | `index.d.ts`                | Global Translate namespace                   |
-| Augment NuxtApp           | `plugins/index.d.ts`        | Add new provides to NuxtApp interface        |
+| Task                      | File                      | Notes                                        |
+| ------------------------- | ------------------------- | -------------------------------------------- |
+| Add page                  | `pages/[name].vue`        | Auto-routed, use layouts                     |
+| Add component             | `components/[Domain]/`    | Base for reusable, feature-name for specific |
+| Add store state           | `stores/translate.ts`     | Composition API, auto-persisted              |
+| Add translation channel   | `stores/translate-api.ts` | CRUD via AddChannel/UpdateChannel            |
+| Configure model provider  | `stores/model.ts`         | Provider CRUD, selection, enable/disable     |
+| Add Tauri command wrapper | `plugins/03.translate.ts` | invoke() with typed params                   |
+| Add i18n string           | `i18n/locales/*.json`     | Both en.json and zh.json                     |
+| Add custom icon           | `assets/icons/*.svg`      | Auto-resolved via `icon-svgs-*`              |
+| Add composable            | `composables/[name].ts`   | Auto-imported by Nuxt                        |
+| Add type declarations     | `index.d.ts`              | Global Translate namespace                   |
+| Augment NuxtApp           | `plugins/index.d.ts`      | Add new provides to NuxtApp interface        |
 
 ## CONVENTIONS
 
@@ -111,28 +113,29 @@ src-renderer/
 
 - **Translate store**: selectedTranslateTypes, sourceLanguage, targetLanguage, sourceInput, output tabs
 - **Translate API store**: Channel CRUD with UUID v7 generation
-- **Persistence**: Auto via `@tauri-store/pinia` (plugin `03.0.pinia.ts`)
+- **Model store**: AI model providers (Anthropic, OpenAI, Gemini, NewAPI), selection, enable/disable
+- **Persistence**: Auto via `@tauri-store/pinia` (plugin `03.0.pinia.ts`, `saveStrategy: 'immediate'`)
 
 ### TranslateApiType Enum
 
 ```typescript
 enum TranslateApiType {
-  OpenAI = 'openai',
-  DeepL = 'deepl',
-  Google = 'google',
-  Baidu = 'baidu',
-  Youdao = 'youdao',
-  Custom = 'custom'
+	OpenAI = 'openai',
+	DeepL = 'deepl',
+	Google = 'google',
+	Baidu = 'baidu',
+	Youdao = 'youdao',
+	Custom = 'custom'
 }
 ```
 
 ## ANTI-PATTERNS
 
-| NEVER                                   | Why                                       |
-| --------------------------------------- | ----------------------------------------- |
-| Use Options API                         | Project uses Composition API exclusively  |
-| Skip `storeToRefs()`                    | Loses reactivity when destructuring store |
-| Hardcode user-facing strings            | Use `$t('key')` for all user-facing text  |
-| Use raw Tailwind for DaisyUI components | Breaks theme consistency                  |
-| Use `any` type                          | Bypasses TypeScript safety                |
-| Import Tauri APIs directly in components| Use `$tauri` / `$translate` plugins       |
+| NEVER                                    | Why                                       |
+| ---------------------------------------- | ----------------------------------------- |
+| Use Options API                          | Project uses Composition API exclusively  |
+| Skip `storeToRefs()`                     | Loses reactivity when destructuring store |
+| Hardcode user-facing strings             | Use `$t('key')` for all user-facing text  |
+| Use raw Tailwind for DaisyUI components  | Breaks theme consistency                  |
+| Use `any` type                           | Bypasses TypeScript safety                |
+| Import Tauri APIs directly in components | Use `$tauri` / `$translate` plugins       |
