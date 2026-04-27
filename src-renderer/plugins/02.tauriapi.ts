@@ -1,125 +1,137 @@
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { getCurrentWindow as getCurrent } from "@tauri-apps/api/window";
-import { invoke } from "@tauri-apps/api/core";
-import { Store } from "@tauri-apps/plugin-store";
-import { listen } from "@tauri-apps/api/event";
-import { writeText } from "@tauri-apps/plugin-clipboard-manager";
+import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { getCurrentWindow as getCurrent } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/core';
+import { load } from '@tauri-apps/plugin-store';
+import { listen } from '@tauri-apps/api/event';
+import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 
 export class Tauri {
-  store: Store;
-  constructor() {
-    this.store = new Store("setting.bin");
-  }
+	store: Awaited<ReturnType<typeof load>> | null;
 
-  async openWindow(url: string, label: string, title: string = "New Window") {
-    console.log("Opening window", url, label, title);
-    const webviewWindow = new WebviewWindow(label, {
-      url: url,
-      title: title,
-    });
+	constructor() {
+		this.store = null;
+	}
 
-    // Creating a promise resolves on creation success and failure.
-    const created = new Promise((resolve, reject) => {
-      webviewWindow.once("tauri://created", () => {
-        console.log("Window created");
-        resolve(webviewWindow);
-      });
-      webviewWindow.once("tauri://error", (e) => {
-        console.error("Error creating window", e);
-        reject(e);
-      });
-    });
+	async init() {
+		this.store = await load('settings.json');
+	}
 
-    return created;
-  }
+	async openWindow(url: string, label: string, title: string = 'New Window') {
+		console.log('Opening window', url, label, title);
+		const webviewWindow = new WebviewWindow(label, {
+			url: url,
+			title: title
+		});
 
-  async openPlayground() {
-    console.log("Opening playground");
-    return await this.openWindow("/playground", "playground", "Tauri Playground");
-  }
+		// Creating a promise resolves on creation success and failure.
+		const created = new Promise((resolve, reject) => {
+			webviewWindow.once('tauri://created', () => {
+				console.log('Window created');
+				resolve(webviewWindow);
+			});
+			webviewWindow.once('tauri://error', (e) => {
+				console.error('Error creating window', e);
+				reject(e);
+			});
+		});
 
-  async openDevLab() {
-    console.log("Opening dev lab");
-    return await this.openWindow("/devlab", "devlab", "Tauri Dev Lab");
-  }
+		return created;
+	}
 
-  async openTranslateWindow() {
-    console.log("Opening translate window");
-    return await invoke("open_translate_window", {});
-  }
+	async openPlayground() {
+		console.log('Opening playground');
+		return await this.openWindow('/playground', 'playground', 'Tauri Playground');
+	}
 
-  async resizeWindowHeight(height: number) {
-    return await invoke("resize_window_height", { height });
-  }
+	async openDevLab() {
+		console.log('Opening dev lab');
+		return await this.openWindow('/devlab', 'devlab', 'Tauri Dev Lab');
+	}
 
-  async resizeWindowWidth(width: number) {
-    return await invoke("resize_window_width", { width });
-  }
+	async openTranslateWindow() {
+		console.log('Opening translate window');
+		return await invoke('open_translate_window', {});
+	}
 
-  async getWindowSize() {
-    const window = getCurrent();
-    return (await window.innerSize()).toLogical(await window.scaleFactor());
-  }
+	async resizeWindowHeight(height: number) {
+		return await invoke('resize_window_height', { height });
+	}
 
-  async onTranslateInputResize({ width, height }: { width: number; height: number }) {
-    const window = getCurrent();
-    const cursize = (await window.innerSize()).toLogical(await window.scaleFactor());
-    if (!(await window.isMaximized()) && cursize.height < height) {
-      await this.resizeWindowHeight(height);
-    }
-  }
+	async resizeWindowWidth(width: number) {
+		return await invoke('resize_window_width', { width });
+	}
 
-  async getAppSettings() {
-    return await invoke("get_settings", {});
-  }
+	async getWindowSize() {
+		const window = getCurrent();
+		return (await window.innerSize()).toLogical(await window.scaleFactor());
+	}
 
-  async getAppStore(key: string) {
-    return await this.store.get(key);
-  }
+	async onTranslateInputResize({ width, height }: { width: number; height: number }) {
+		const window = getCurrent();
+		const cursize = (await window.innerSize()).toLogical(await window.scaleFactor());
+		if (!(await window.isMaximized()) && cursize.height < height) {
+			await this.resizeWindowHeight(height);
+		}
+	}
 
-  async setAppStore(key: string, value: any) {
-    return await this.store.set(key, value);
-  }
+	async getAppSettings() {
+		return await invoke('get_settings', {});
+	}
 
-  async listen_event() {
-    return await listen("cpcp", (event) => {
-      console.log("Event received", event);
-      const store = useTranslateStore();
-      store.sourceInputFromClipboard = event.payload as string;
-    });
-  }
+	async getAppStore(key: string) {
+		if (!this.store) {
+			throw new Error('Store not initialized');
+		}
+		return await this.store.get(key);
+	}
 
-  async on_ready() {
-    getCurrent().emit("on_ready", {});
-  }
+	async setAppStore(key: string, value: any) {
+		if (!this.store) {
+			throw new Error('Store not initialized');
+		}
+		return await this.store.set(key, value);
+	}
 
-  async copyToClipboard(text: string) {
-    return await writeText(text);
-  }
+	async listen_event() {
+		return await listen('cpcp', (event) => {
+			console.log('Event received', event);
+			const store = useTranslateStore();
+			store.sourceInputFromClipboard = event.payload as string;
+		});
+	}
 
-  async setTranslateWinPin(isPin: boolean) {
-    return await invoke("set_pin", { isPin });
-  }
+	async on_ready() {
+		getCurrent().emit('on_ready', {});
+	}
+
+	async copyToClipboard(text: string) {
+		return await writeText(text);
+	}
+
+	async setTranslateWinPin(isPin: boolean) {
+		return await invoke('set_pin', { isPin });
+	}
 }
 
 export default defineNuxtPlugin({
-  name: "tauri",
-  async setup(app) {
-    const tauri = new Tauri();
-    tauri.listen_event();
-    app.provide("tauri", tauri);
-  },
-  hooks: {
-    "app:created"() {
-      console.log("App created");
-      const { $tauri } = useNuxtApp();
-      $tauri.on_ready();
-      const isDev = process.env.NODE_ENV === "development";
-      if (isDev) {
-        console.log("Development mode");
-      } else {
-        console.log("Production mode");
-      }
-    },
-  },
+	name: 'tauri',
+	async setup(app) {
+		const tauri = new Tauri();
+		await tauri.init();
+		tauri.listen_event();
+		app.provide('tauri', tauri);
+	},
+	hooks: {
+		'app:created'() {
+			console.log('App created');
+			const { $tauri } = useNuxtApp();
+			$tauri.on_ready();
+			const isDev = process.env.NODE_ENV === 'development';
+			if (isDev) {
+				console.log('Development mode');
+			} else {
+				console.log('Production mode');
+			}
+		}
+	}
 });

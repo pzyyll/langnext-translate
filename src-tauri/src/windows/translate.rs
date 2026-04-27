@@ -22,9 +22,11 @@ use tauri::{
 };
 use tauri_plugin_clipboard_manager::ClipboardExt;
 
+const INIT_WIN_SIZE: (f64, f64) = (500.0, 350.0);
+
 lazy_static! {
     static ref MOUSE_EVENT_ID: Arc<AtomicUsize> = Arc::new(AtomicUsize::new(0));
-    static ref WIN_SIZE: Arc<Mutex<(f64, f64)>> = Arc::new(Mutex::new((300.0, 270.0)));
+    static ref WIN_SIZE: Arc<Mutex<(f64, f64)>> = Arc::new(Mutex::new(INIT_WIN_SIZE));
 }
 
 #[derive(Debug, Default)]
@@ -154,11 +156,13 @@ pub fn try_show_on_cpcp<R: Runtime>(app: &tauri::AppHandle<R>) {
 }
 
 fn set_win_visible<R: Runtime>(app: &tauri::AppHandle<R>, win: &WebviewWindow<R>) {
+    let cursor = app.cursor_position().unwrap();
+    adjust_win_position(win, Some(cursor));
+
     let _ = win.show();
     let _ = win.unminimize();
     // let _ = win.set_position(cursor);
-    let cursor = app.cursor_position().unwrap();
-    adjust_win_position(win, Some(cursor));
+
     reg_mouse_event(Arc::new(win.clone()));
 }
 
@@ -199,8 +203,8 @@ where
         .always_on_top(true)
         .resizable(true)
         .auto_resize()
-        .min_inner_size(400.0, 300.0)
-        .inner_size(400.0, 300.0)
+        .min_inner_size(INIT_WIN_SIZE.0, INIT_WIN_SIZE.1)
+        .inner_size(INIT_WIN_SIZE.0, INIT_WIN_SIZE.1)
         .skip_taskbar(true)
         //.transparent
         .position(x.into(), y.into())

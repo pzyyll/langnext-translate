@@ -1,23 +1,25 @@
 import 'dotenv/config';
-import OpenAI from 'openai';
-import { zodResponseFormat } from 'openai/helpers/zod';
+import { generateText, Output } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
 import z from 'zod';
 import fs from 'fs';
 
 const baseModel = 'gpt-5.4-mini';
 const apiKey = process.env.OPENAI_API_KEY;
-const baseUrl = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
-const client = new OpenAI({ apiKey, baseURL: baseUrl });
+const baseURL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
+
+const openai = createOpenAI({
+	apiKey,
+	baseURL
+});
 
 const i18nPath = 'src-renderer/i18n/locales';
 
-const responseSchema = z.object({
-	items: z.array(
-		z.object({
-			key: z.string(),
-			value: z.string()
-		})
-	)
+const responseFormat = Output.array({
+	element: z.object({
+		key: z.string(),
+		value: z.string()
+	})
 });
 
 async function getAllTargetLanguages() {
@@ -29,32 +31,27 @@ async function getAllTargetLanguages() {
 }
 
 async function generateContent(srcData: string, targetLanguage = 'en') {
-	const response = await client.chat.completions.parse({
-		model: baseModel,
-		messages: [
-			{
-				role: 'user',
-				content: `
-You are a localization expert, translating the provided localization JSON file into the corresponding language.
+	const { output } = await generateText({
+		model: openai(baseModel),
+		system: `
+You are a localization expert, translating the provided localization JSON file content into the corresponding language.
 
 ## Translation Instructions
 - Only translate the value parts of the JSON file, not the keys.
 - Keys ending with the suffix '-nt' do not require translation; just keep them as is.
 - Ensure the translated text is natural and appropriate for the target language.
 - Ensure that original key names remain unchanged, only the value part needs to be translated, and no deletions should be made.
-
-Please translate the following JSON file into ${targetLanguage}:
-
-## Source File (zh.json):
+`,
+		prompt: `
+Please translate the JSON file content into ${targetLanguage}:						
 \`\`\`json
 ${srcData}
-\`\`\``
-			}
-		],
-		response_format: zodResponseFormat(responseSchema, 'items')
+\`\`\`
+`,
+		output: responseFormat
 	});
 
-	return response.choices[0].message.parsed;
+	return output;
 }
 
 async function main() {
@@ -72,17 +69,18 @@ async function main() {
 		const translationPromises = targetLanguages.map(async (targetLanguage) => {
 			try {
 				console.log(`Generating content for ${targetLanguage}...`);
+
 				const content = await generateContent(srcData, targetLanguage);
 				const targetFilePath = `${i18nPath}/${targetLanguage}.json`;
 
-				if (!content || !content.items || content.items.length === 0) {
+				if (content.length === 0) {
 					console.error(`No content generated for ${targetLanguage}. Skipping...`);
 					return { language: targetLanguage, success: false };
 				}
 
 				const outputObject: Record<string, string> = {};
 				// Convert the array of items to an object
-				content.items.forEach((item) => {
+				content.forEach((item) => {
 					outputObject[item.key] = item.value;
 				});
 

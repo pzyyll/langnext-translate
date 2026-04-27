@@ -113,7 +113,22 @@ export default defineNuxtConfig({
 				}
 			}),
 			tailwindcss()
-		]
+		],
+		optimizeDeps: {
+			include: [
+				'@vue/devtools-core',
+				'@vue/devtools-kit',
+				'@tauri-store/pinia',
+				'@tauri-apps/api/core',
+				'@tauri-apps/api/webviewWindow',
+				'@tauri-apps/api/window',
+				'@tauri-apps/plugin-store',
+				'@tauri-apps/api/event',
+				'@tauri-apps/plugin-clipboard-manager',
+				'markdown-it',
+				'highlight.js'
+			]
+		}
 	},
 	devServer: {
 		port: 1234
