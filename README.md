@@ -40,49 +40,6 @@ through that server configuration.
 | Hotkeys | `kmhook-rs` |
 | Dictionary parsing | `mdict-analysis-rs` |
 
-## Project Structure
-
-```text
-lexin-tauri-nuxt/
-├── design/              # Design notes, architecture docs, UI mockups
-├── scripts/             # Utility scripts
-├── src-renderer/        # Nuxt 4 frontend application
-├── src-tauri/           # Tauri 2 Rust backend
-├── tests/               # API and experiment notebooks
-├── nuxt.config.ts       # Nuxt configuration
-├── package.json         # Frontend scripts and dependencies
-└── README.md
-```
-
-### Frontend
-
-```text
-src-renderer/
-├── app.vue              # Nuxt root component
-├── pages/               # File-based routes
-├── components/          # Vue components grouped by domain
-├── stores/              # Pinia stores
-├── plugins/             # Nuxt plugins and Tauri API wrappers
-├── layouts/             # App layouts
-├── i18n/locales/        # English and Chinese locale files
-├── assets/css/          # Tailwind and global styles
-└── assets/icons/        # Custom provider and app icons
-```
-
-### Backend
-
-```text
-src-tauri/src/
-├── lib.rs               # App setup, plugins, hotkeys, run loop
-├── main.rs              # Native entry point
-├── cmds/                # Tauri IPC commands
-├── core/                # Shared app state
-├── module/              # Translation command implementation and SDK placeholders
-├── windows/             # Window, tray, and popup management
-├── plugin/              # Custom Tauri plugin wrappers
-└── utils/               # Settings, paths, and monitor helpers
-```
-
 ## Requirements
 
 - Windows, macOS, or Linux supported by Tauri 2. Some current behavior is Windows-focused.
