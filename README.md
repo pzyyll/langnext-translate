@@ -5,10 +5,6 @@ Pinia, Tailwind CSS, DaisyUI, and a Rust backend. It provides quick clipboard-ba
 translation, a popup translation window, configurable translation providers, and a
 desktop-first workflow for reading and translating text across applications.
 
-The app uses a remote `lexinsvr` API as the translation backend proxy. Provider
-requests such as Google, DeepL, Baidu, and OpenAI-compatible translation are routed
-through that server configuration.
-
 ## Features
 
 - Desktop app powered by Tauri 2 and Rust.
